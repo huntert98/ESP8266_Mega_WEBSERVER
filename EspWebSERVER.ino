@@ -97,7 +97,7 @@
           clearSerialBuffer(); 
 
           digitalWrite(led1, led1State); 
-          Serial.println("LED 1"); 
+          Serial.print("LED 1: "); 
           Serial.println(led1State); 
           homepage1(ch_id); 
         }
@@ -111,7 +111,7 @@
           clearSerialBuffer(); 
 
           digitalWrite(led2, led2State); 
-          Serial.println("LED 2"); 
+          Serial.print("LED 2: "); 
           Serial.println(led2State); 
           homepage1(ch_id); 
         }
@@ -125,7 +125,7 @@
           clearSerialBuffer(); 
 
           digitalWrite(led3, led3State); 
-          Serial.println("LED 3"); 
+          Serial.print("LED 3: "); 
           Serial.println(led3State); 
           homepage1(ch_id); 
         }
@@ -140,7 +140,7 @@
           clearSerialBuffer(); 
 
           digitalWrite(relay1, relay1State); 
-          Serial.println("Relay 1"); 
+          Serial.print("Relay 1: "); 
           Serial.println(relay1State); 
           homepage1(ch_id); 
         }
@@ -165,7 +165,7 @@
    String tmpData; 
     
    espSerial.println(AT_Command); 
-   delay(10); 
+   delay(50); 
    while (espSerial.available() >0 )  { 
      char c = espSerial.read(); 
      tmpData += c; 
