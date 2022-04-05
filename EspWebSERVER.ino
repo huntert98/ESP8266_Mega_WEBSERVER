@@ -1,11 +1,6 @@
   //  Date: 30/01/2016 - Original code: https://gist.github.com/SamirTafesh/77b58914ad94787ec939
 
   //  WEB SERVER - Arduino MEGA2560 and ESP8266-01 WIFI module
-  //  on MEGA2560 we are using Hardware Serial1 to connect ESP8266 Module (Pins 18 & 19)
-
-  //  For this demonstration, I am connecting: 
-  //    3 Leds & 1 Relay As output, To Be Controlled
-  //    Web Page to Control these Outputs
     
  HardwareSerial & arduinoTerminal = Serial; 
  HardwareSerial & espSerial = Serial1; 
@@ -16,8 +11,11 @@
  const int led2 = 10;
  const int led3 = 9;
  const int relay1 = 6;
- 
- //const int ESP8266_CHPD = 1; 
+  
+
+  // define network settings
+  const string SSID = "SSID";
+  const string pswrd = "PASSWORD";
 
  // Variables will change: 
  int led1State = LOW;             // ledState used to set the LED1 
@@ -37,35 +35,33 @@
    arduinoTerminal.begin(115200); // Serial monitor 
    espSerial.begin(115200); // ESP8266 
       
-   arduinoTerminal.println(F("ESP8266 & Arduino Mega Webserver.")); 
+   arduinoTerminal.println(F("ESP8266 & Arduino Mega Webserver."));  //the F() macro saves on RAM by storing strings in PROGMEM
 
    delay(2000); 
     
-   clearSerialBuffer();  //Function to Clear the ESP8266 Buffer 
+   clearSerialBuffer();  //clears the ESP8266 Buffer 
     
-   connectWiFi("SSID", "PASSWORD");  //connect to WIFI router 
+   connectWiFi(SSID, pswrd);  //connect to WIFI 
    delay(10000);
    
    //test if the module is ready 
+   //TODO this code needs to be set up to loop and retry if connection fails
+   //The main loop needs to reconnect too if wifi was lost at some point
    
-   arduinoTerminal.print("AT : "); 
-   arduinoTerminal.println(GetResponse("AT",100)); 
+   arduinoTerminal.print(F("AT : "));           
+   arduinoTerminal.println(GetResponse("AT",100));    //AT is a test command that returns OK
       
-   //Change to mode 1 (Client Mode) 
-   arduinoTerminal.print("AT+CWMODE=1 : "); 
-   arduinoTerminal.println( etResponse("AT+CWMODE=1",10)); 
-          
-   //set the multiple connection mode 
+   arduinoTerminal.print("AT+CWMODE=1 : ");    
+   arduinoTerminal.println(GetResponse("AT+CWMODE=1",10));     //Change to mode 1 (Client Mode) 
+         
    arduinoTerminal.print(F("AT+CIPMUX=1 : ")); 
-   arduinoTerminal.println(GetResponse("AT+CIPMUX=1",10)); 
-    
-   //set the server of port 8888 check "no change" or "OK",  it can be changed according to your configuration 
-   arduinoTerminal.print(F("AT+CIPSERVER=1,8888 : ")); 
-   arduinoTerminal.println(GetResponse("AT+CIPSERVER=1,8888", 10)); 
+   arduinoTerminal.println(GetResponse("AT+CIPMUX=1",10));  //set the multiple connection mode 
+       
+   arduinoTerminal.print(F("AT+CIPSERVER=1,8888 : "));    
+   arduinoTerminal.println(GetResponse("AT+CIPSERVER=1,8888", 10));   //set the server port to 8888
    
-    //print the ip addr 
-   arduinoTerminal.print(F("ip address : ")); 
-   arduinoTerminal.println( GetResponse("AT+CIFSR", 20) ); 
+   arduinoTerminal.print(F("ip address : "));    
+   arduinoTerminal.println(GetResponse("AT+CIFSR", 20));   //print the ip addr 
    delay(200); 
  
    arduinoTerminal.println(); 
@@ -220,13 +216,13 @@
            Content +="<meta name='apple-mobile-web-app-capable' content='yes' />\r\n";
            Content +="<meta name='apple-mobile-web-app-status-bar-style' content='black-translucent' />\r\n";
            Content +="<link rel='stylesheet' type='text/css' href='http://randomnerdtutorials.com/ethernetcss.css' />\r\n";
-           Content +="<TITLE>SAM's Home Automation Web Server</TITLE>\r\n";
+           Content +="<TITLE>Arduino Web Server</TITLE>\r\n";
            Content +="</HEAD>\r\n";
            Content +="<BODY>\r\n";
-           Content +="<H1>Home Automation Web Server Arduino</H1>\r\n";
+           Content +="<H1>Arduino Web Server</H1>\r\n";
            Content +="<hr />\r\n";
            Content +="<br />\r\n";  
-           Content +="<H2>Arduino WIFI (BOSS)</H2>\r\n";
+           Content +="<H2>Arduino WIFI</H2>\r\n";
            Content +="<br />\r\n";  
            if (led1State == LOW) 
               Content +="<a href=\"/?button1\"\">LED 1</a><br />\r\n";   
@@ -254,7 +250,6 @@
            Content +="<br />\r\n"; 
            Content +="<br />\r\n";     
            Content +="<br />\r\n"; 
-           Content +="<p>Created by Samir Tafesh. E-mail: samir.tafesh@gmail.com for more projects!</p>\r\n";  
            Content +="<br />\r\n"; 
            Content +="</BODY>\r\n";
            Content +="</HTML>\r\n";
