@@ -14,8 +14,8 @@
   
 
   // define network settings
-  const string SSID = "SSID";
-  const string pswrd = "PASSWORD";
+  const String SSID = "SSID";
+  const String pswrd = "PASSWORD";
 
  // Variables will change: 
  int led1State = LOW;             // ledState used to set the LED1 
